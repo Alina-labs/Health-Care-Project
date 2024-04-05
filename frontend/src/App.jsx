@@ -3,8 +3,8 @@ import Footer from './components/commons/Footer'
 import Navbar from './components/commons/Navbar'
 //import SignIn from './pages/Auth/SignIn';
 //import SignUp from './pages/Auth/SignUp';
-import Landing1 from './pages/Landing1/Landing1';
-//import About from './pages/About/About';
+//import Landing1 from './pages/Landing1/Landing1';
+import About1 from './pages/About/About1';
 const App = () => {
   
 
@@ -12,8 +12,8 @@ const App = () => {
     <>
         <Navbar /> 
        
-        <Landing1/> 
-       {/* <About/>  */}
+        {/* <Landing1/>  */}
+        <About1/> 
         {/* <Contact/>   */}
         {/* <SignIn/>    */}
         {/* <Sign/Up>   */}
