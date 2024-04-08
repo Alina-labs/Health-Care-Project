@@ -2,27 +2,36 @@
 import React from 'react'
 import { Menu, X } from 'lucide-react'
 import Logo from '../../assets/Logo/Logo.png';
+import { NavLink, useNavigate  } from 'react-router-dom';
 const menuItems = [
   {
     name: 'Home',
-    href: '#',
+    href: '/',
   },
   {
     name: 'About',
-    href: '#',
+    href: '/about',
   },
   {
     name: 'Contact',
-    href: '#',
+    href: '/contact',
   },
 ]
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+
+  const logout=() => {
+    localStorage.clear();
+    navigate('/signin')
+  }
+
+  const auth = localStorage.getItem('user');
 
   return (
     <div className="relative w-full bg-white">
@@ -44,23 +53,47 @@ const Navbar = () => {
           <ul className="ml-12 inline-flex space-x-8">
             {menuItems.map((item) => (
               <li key={item.name}>
+                <NavLink to={item.href}>
                 <a
                   href={item.href}
                   className="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
                   {item.name}
                 </a>
+                </NavLink>
               </li>
             ))}
           </ul>
         </div>
         <div className="hidden lg:block">
+          { auth ?
+        <NavLink to="/signin">
+          <button
+            type="button"
+            className="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            onClick={logout}
+          >
+            Logout
+          </button>
+          </NavLink> :<>
+          <NavLink to="/signin">
           <button
             type="button"
             className="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
           >
             Login
           </button>
+          </NavLink>
+          
+          <NavLink to="/signup">
+          <button
+            type="button"
+            className="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          >
+            Register
+          </button>
+          </NavLink>
+          </>}
         </div>
         <div className="lg:hidden">
           <Menu onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />

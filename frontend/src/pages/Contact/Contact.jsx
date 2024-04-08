@@ -1,10 +1,72 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 //import React from 'react'
 //import { Menu, X, MapPin } from 'lucide-react'
 import contact from '../../assets/Logo/contact.png';
+import {v4 as uuidv4} from 'uuid';
 
 const Contact=()=> {
+  const [name , setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [number, setNumber] = useState('');
+  const [message, setMessage] = useState('');
+  const [isloggedin, setIsLoggedIn] = useState(false);
+  const [userdata, setUserData] = useState("");
+  // const [temporaryUserId, setTemporaryUserId] = useState('');
+  console.log(isloggedin,userdata);
+  // setTemporaryUserId(newUserId);
+  
+
+  const collectData=async ()=>{
+    console.warn(name || userdata.name, email || userdata.email, number || userdata.number, message);
+    let userid;
+    if(isloggedin){
+       userid = userdata._id;
+    }else{
+      const newUserId = uuidv4();
+      userid = newUserId;
+      console.log(userid);      
+    }
+    let result = await fetch('http://localhost:4000/contact',{
+      method:'post',
+      body:JSON.stringify({userid,name,email,number,message}),
+      headers:{
+        'Content-Type':'application/json'
+      },
+    })
+    result = await result.json()
+    console.warn(result);
+    // localStorage.setItem("user", JSON.stringify(result));
+    if(result)
+    {
+      // navigate('/')
+    }
+
+
+  }
+
+  useEffect(()=>{
+
+    const auth = localStorage.getItem('user');
+    if(auth){
+
+      const userid = JSON.parse(localStorage.getItem('user'))._id;
+      if(userid){
+        setIsLoggedIn(true);
+
+        const userdata = JSON.parse(localStorage.getItem('user'));
+        setUserData(userdata);
+        console.log(userdata)
+      }else{
+        setIsLoggedIn(false);
+        setUserData("");
+      }
+    }else{
+      setIsLoggedIn(false);
+      setUserData("");
+    }  
+  }, []);
 
   return (
     <>
@@ -44,10 +106,13 @@ const Contact=()=> {
                         First Name
                       </label>
                       <input
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                         type="text"
                         id="first_name"
                         placeholder="First Name"
+                        onChange={(e) => setName(e.target.value)}
+                        value={isloggedin ? userdata.name || name : name}
+                        // readOnly={isloggedin}
                       />
                     </div>
                     <div className="grid w-full  items-center gap-1.5">
@@ -58,7 +123,7 @@ const Contact=()=> {
                         Last Name
                       </label>
                       <input
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                         type="text"
                         id="last_name"
                         placeholder="Last Name"
@@ -73,10 +138,13 @@ const Contact=()=> {
                       Email
                     </label>
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="text"
                       id="email"
                       placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={isloggedin ? userdata.email || email : email}
+                      // readOnly={isloggedin}
                     />
                   </div>
                   <div className="grid w-full  items-center gap-1.5">
@@ -87,10 +155,13 @@ const Contact=()=> {
                       Phone number
                     </label>
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="tel"
                       id="phone_number"
                       placeholder="Phone number"
+                      onChange={(e) => setNumber(e.target.value)}
+                      value={isloggedin ? userdata.number || number :number}
+                      // readOnly={isloggedin}
                     />
                   </div>
                   <div className="grid w-full  items-center gap-1.5">
@@ -101,15 +172,18 @@ const Contact=()=> {
                       Message
                     </label>
                     <textarea
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       id="message"
                       placeholder="Leave us a message"
+                      onChange={(e) => setMessage(e.target.value)}
+                      value={message}
                       cols={3}
                     />
                   </div>
                   <button
                     type="button"
                     className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                    onClick={collectData}
                   >
                     Send Message
                   </button>

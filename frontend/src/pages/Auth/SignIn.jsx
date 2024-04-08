@@ -1,7 +1,42 @@
 //import React from 'react'
+import {React, useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react'
 import Doc from "../../assets/Logo/Doc.png"
+
+import { useNavigate } from 'react-router-dom'
+// import { set } from 'mongoose';
 const SignIn=()=> {
+  const [email, setEmail]=useState('');
+  const [password, setPassword]=useState('');
+
+  const navigate = useNavigate();
+
+  
+  useEffect(()=>{
+    const auth = localStorage.getItem('user');
+    if(auth){
+      navigate('/')
+    }
+  })
+  const handleLogin =async ()=>{
+    console.log(email, password);
+    let result = await fetch('http://localhost:4000/login',{
+      method:'post',
+      body:JSON.stringify({email, password}),
+      headers:{
+        'Content-Type':'application/json'
+      }
+    });
+    result = await result.json();
+    console.warn(result);
+    if(result.name){
+      localStorage.setItem("user",JSON.stringify(result) );
+      navigate('/');
+    }else{
+      alert("please enter correct details");
+    }
+  }
+
   return (
     <section >
       <div className="grid grid-cols-1 lg:grid-cols-2" style={{backgroundColor:"" }}>
@@ -30,6 +65,8 @@ const SignIn=()=> {
                       className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
                     ></input>
                   </div>
                 </div>
@@ -53,6 +90,8 @@ const SignIn=()=> {
                       className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
+                      onChange={(e) => setPassword(e.target.value)}
+                      value={password}
                     ></input>
                   </div>
                 </div>
@@ -60,6 +99,7 @@ const SignIn=()=> {
                   <button
                     type="button"
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    onClick={handleLogin}
                   >
                     Get started <ArrowRight className="ml-2" size={16} />
                   </button>

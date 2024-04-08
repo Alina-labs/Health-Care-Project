@@ -1,6 +1,42 @@
-//import React from 'react'
+import { React, useState,useEffect } from 'react'
 import { ArrowRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
 const SignUp=()=> {
+  const [name, setName]=useState("");
+  const [email, setEmail]=useState("");
+  const [dob, setDob]=useState("");
+  const [number, setNumber]=useState("");
+  const [gender, setGender]=useState("");
+  const [password, setPassword]=useState("");
+
+  const navigate = useNavigate();
+
+  const auth = localStorage.getItem('user');
+  useEffect(()=>{
+    if(auth){
+      navigate('/')
+    }
+  })
+
+  const collectData= async () => {
+    console.warn(name,email,dob,number,gender,password);
+    let result = await fetch('http://localhost:4000/register',{
+      method:'post',
+      body:JSON.stringify({name,email,dob,number,gender,password}),
+      headers:{
+        'Content-Type':'application/json'
+      },
+    })
+    result = await result.json()
+    console.warn(result);
+    localStorage.setItem("user", JSON.stringify(result));
+    if(result)
+    {
+      navigate('/')
+    }
+  }
+
   return (
     <section>
     <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24 h-full">
@@ -31,6 +67,8 @@ const SignUp=()=> {
                   type="text"
                   placeholder="Full Name"
                   id="name"
+                  value ={name}
+                  onChange={(e)=>setName(e.target.value)}
                 ></input>
               </div>
             </div>
@@ -45,6 +83,8 @@ const SignUp=()=> {
                   type="email"
                   placeholder="Email"
                   id="email"
+                  value ={email}
+                  onChange={(e)=>setEmail(e.target.value)}
                 ></input>
               </div>
             </div>
@@ -59,6 +99,8 @@ const SignUp=()=> {
                   type="date"
                   placeholder="Date of Birth"
                   id="dob"
+                  value ={dob}
+                  onChange={(e)=>setDob(e.target.value)}
                 ></input>
               </div>
             </div>
@@ -73,6 +115,8 @@ const SignUp=()=> {
                   type="tel"
                   placeholder="Contact Number"
                   id="contact"
+                  value ={number}
+                  onChange={(e)=>setNumber(e.target.value)}
                 ></input>
               </div>
             </div>
@@ -85,11 +129,13 @@ const SignUp=()=> {
                 <select
                   className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                   id="gender"
+                  value ={gender}
+                  onChange={(e)=>setGender(e.target.value)}
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -106,6 +152,8 @@ const SignUp=()=> {
                   type="password"
                   placeholder="Password"
                   id="password"
+                  value ={password}
+                  onChange={(e)=>setPassword(e.target.value)}
                 ></input>
               </div>
             </div>
@@ -113,6 +161,7 @@ const SignUp=()=> {
               <button
                 type="button"
                 className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                onClick={collectData}
               >
                 Create Account <ArrowRight className="ml-2" size={16} />
               </button>
